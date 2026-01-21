@@ -1,0 +1,52 @@
+# 🎉 E-CAMPUSBUS NOTIFICATION SYSTEM — STABLE & POLISHED _Version: e-campusBus v0.1.0_
+
+## ✨ Snapshot
+- ✅ Real-time booking notifications (student → driver) with fast polling (~5s) and live stats.
+- ✅ Full driver workflow: filter by status, accept/reject with reasons, audit trail in `activity_logs`.
+- ✅ Student booking UX: calendar (30 days), time picker, seat grid, driver availability, live fare summary.
+- ✅ One-driver-one-bus enforcement; drivers must assign a bus before receiving notifications.
+- ✅ Admin safety tools: combined reset (bookings + notifications + logs) for test data cleanup.
+
+## 🗂️ Key Files
+- 📄 `driver/notifications.php` — Notification dashboard (cards, filters, live polling).
+- 📄 `api/handle_booking_notification.php` — Accept/reject API with validation + logging.
+- 📄 `api/check_notifications.php` — Lightweight polling endpoint for live updates.
+- 📄 `driver/assign_bus.php` — Bus assignment gate to prevent “ghost drivers”.
+- 📄 `student/make_booking.php` — Enhanced booking flow that triggers notifications.
+- 🧭 Docs: `USAGE_GUIDE.md`, `ADMIN_MAINTENANCE_GUIDE.md`, `SYSTEM_STATUS.md`, `PROJECT_STRUCTURE.md`.
+
+## 🚀 Quick Start (Ops-ready)
+1) Run setup tables (if belum): buka `public/setup/setup_notifications.php` → pastikan `success:true`.
+2) Login pelajar → buat tempahan di `student/make_booking.php`.
+3) Login pemandu (pastikan bas ditugaskan) → semak `driver/notifications.php` → terima/tolak.
+
+## 🎯 What’s Working Well
+- ✔️ Duplicate-safe bus management: normalized numbers, friendly errors, capacity validation, one driver per bus.
+- ✔️ Fast, non-disruptive refresh: polling container + stat cards tanpa reload penuh.
+- ✔️ Locked flow without bus: pemandu perlu assign bas sebelum notifikasi dibuka.
+- ✔️ Auditability: setiap terima/tolak dicatat dalam `activity_logs` dengan masa/alasannya.
+- ✔️ Consistent nav: pautan notifikasi ada di semua halaman pemandu; navbar pelajar diperkemas.
+
+## 🔒 Reliability & Security
+- Prepared statements, input validation (booking/action), role checks on pages & API, htmlspecialchars on output.
+- Booking/notification status kept in sync; rejects push booking balik ke `pending` untuk pemandu lain.
+- Reset Data butang gabungan (admin) untuk lapangan ujian; elakkan guna pada produksi tanpa sandaran.
+
+## ✅ Go-Live Checklist
+- Tables wujud (`booking_notifications`, `activity_logs`) dan skema asas `i_bus_system.sql` sudah diimport.
+- Pemandu ada bas ditetapkan; nombor bas unik dan kapasiti > 0.
+- Student booking → notifikasi muncul di papan pemuka pemandu dalam ~5s.
+- Accept → booking `confirmed`, notif `accepted`, `responded_at` terisi.
+- Reject (dengan alasan) → booking kembali `pending`, notif `rejected`, `responded_at` terisi.
+- Filters (Pending/Accepted/Rejected/All) berfungsi dan statistik ikut.
+- Ujian pantas lulus: login, buat tempahan, terima, tolak, dan lihat log aktiviti.
+
+## 📊 Status
+- Prod readiness: ✅ Stable
+- Last updated: January 22, 2026
+- Maintenance: Admin reset available; backup disyorkan sebelum operasi besar.
+
+## 🔜 Suggested Next Tweaks (opsional)
+- Add email/SMS hooks if diperlukan.
+- Enable sound/toast on new notification untuk pemandu.
+- Tune polling interval (default 5000 ms) jika trafik tinggi/rendah.
